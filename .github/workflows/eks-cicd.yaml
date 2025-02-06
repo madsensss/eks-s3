@@ -77,12 +77,20 @@ jobs:
         
     - name: Commit and push changes
       run: |
+        cd manifest-repo
+
         git config --local user.email "${{ secrets.G_USER_EMAIL }}"
         git config --local user.name "${{ secrets.G_USER }}"
+
+        git status
+        git diff ./manifest/***.yaml
+
         if [[ -n $(git status --porcelain) ]]; then
-          git add .
+          git add -A
           git commit -m "Update application image version for ArgoCD"
           git push
         else
+          echo "No changes to commit"
+        fi
           echo "No changes to commit"
         fi
