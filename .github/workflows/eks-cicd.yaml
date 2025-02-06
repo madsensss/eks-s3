@@ -71,26 +71,18 @@ jobs:
 
     - name: Set up Image
       run: |
-        sed -i "s%image: ${{ secrets.AWS_ECR_ID }}.dkr.ecr.${{ secrets.AWS_ECR_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY }}:[a-zA-Z0-9]*%image: ${{ secrets.AWS_ECR_ID }}.dkr.ecr.${{ secrets.AWS_ECR_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY }}:${{ github.sha }}%" ./manifest/eks-app.yaml
-        echo "==== After sed ===="
-        cat ./manifest/eks-app.yaml
-        
-    - name: Commit and push changes
+        sed -i "s%image: ${{ secrets.AWS_ECR_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORYY }}:[a-zA-Z0-9._-]\+%image: ${{ secrets.ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.ECR_PRIVATE_REPOSITORY }}:${{ github.sha }}%" ./manifest/eks-app.yaml
+
+    - name: Commit and push changes if needed
       run: |
-        cd manifest-repo
-
-        git config --local user.email "${{ secrets.G_USER_EMAIL }}"
-        git config --local user.name "${{ secrets.G_USER }}"
-
-        git status
-        git diff ./manifest/***.yaml
-
-        if [[ -n $(git status --porcelain) ]]; then
-          git add -A
-          git commit -m "Update application image version for ArgoCD"
-          git push
-        else
-          echo "No changes to commit"
+        git config --local user.email "madsenss@naver.com"
+        git config --local user.name "madsensss"
+        
+        if git diff --quiet; then
+          echo "No changes to commit."
+          exit 0
         fi
-          echo "No changes to commit"
-        fi
+        
+        git add ./manifest/eks-app.yaml
+        git commit -m "Update application image version for ArgoCD"
+        git push
