@@ -46,7 +46,7 @@ public class S3Service {
 			throw new Exception("파일 전달 오류 발생");
 		}
 		// DB 저장
-		String filePath = "/mount";
+		String filePath = "/mnt/s3_data";
 		String attachmentOriginalFileName = file.getOriginalFilename();
 		UUID uuid = UUID.randomUUID();
 		String attachmentFileName = uuid.toString() + "_" + attachmentOriginalFileName;
@@ -62,8 +62,7 @@ public class S3Service {
 		Long fileNo = fileRepository.save(attachmentFile).getAttachmentFileNo();
 		
 		if(fileNo != null) {
-			// C:/CE/97.data/s3_data에 파일 저장 
-			File uploadFile = new File(attachmentFile.getFilePath() + "//" + attachmentFileName);
+			File uploadFile = new File(attachmentFile.getFilePath() + "/" + attachmentFileName);
 			file.transferTo(uploadFile);
 			
 			// S3 전송 및 저장 (putObject)
