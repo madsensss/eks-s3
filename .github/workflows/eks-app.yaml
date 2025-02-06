@@ -77,6 +77,10 @@ jobs:
       run: |
         git config --local user.email "${{ secrets.G_USER_EMAIL }}"
         git config --local user.name "${{ secrets.G_USER }}"
-        git add .
-        git commit -m "Update application image version for ArgoCD"
-        git push
+        if [[ -n $(git status --porcelain) ]]; then
+          git add .
+          git commit -m "Update application image version for ArgoCD"
+          git push
+        else
+          echo "No changes to commit"
+        fi
